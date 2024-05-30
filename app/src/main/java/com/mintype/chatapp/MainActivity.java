@@ -206,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
 //                textView.setBackgroundColor(Color.GRAY);
 //                textView.setId(View.generateViewId());
 //
-//                // Create a shape drawable with rounded corners
 //                GradientDrawable drawable = new GradientDrawable();
 //                drawable.setShape(GradientDrawable.RECTANGLE);
 //                drawable.setColor(Color.GRAY); // Set background color

@@ -24,7 +24,7 @@ public class Message {
         this.timestamp = timestamp;
     }
 
-    public Message(String userId, String userName, String messageContent, Timestamp now) {
+    public Message(String userId, String sender, String message, Timestamp timestamp) {
         this.sender = sender;
         this.message = message;
         this.timestamp = timestamp;

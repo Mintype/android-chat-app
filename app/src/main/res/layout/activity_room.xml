@@ -11,7 +11,7 @@
         android:layout_height="685dp"
         android:layout_weight="1"
         android:id="@+id/chat"
-        android:background="@color/black" >
+        android:background="@color/light_grey" >
 
         <LinearLayout
             android:id="@+id/linearlayout"
@@ -42,7 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.1"
             android:layout_margin="5dp"
-            android:backgroundTint="@color/black"
+            android:backgroundTint="@color/brown"
+            android:gravity="center"
             android:text="Send"
             app:cornerRadius="10dp" />
     </LinearLayout>

@@ -143,10 +143,8 @@ public class ChatsPage extends AppCompatActivity {
         }
     }
     public void createCollection(final String collectionName) {
-        // Get reference to the collection
         final CollectionReference collection = db.collection("rooms");
 
-        // Check if the collection already exists
         collection.document(collectionName).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -158,7 +156,7 @@ public class ChatsPage extends AppCompatActivity {
                             //collection.document("welcome-msg").set(new ChatMessage(collectionName));
                             CollectionReference rooms = db.collection("rooms");
                             rooms.document(collectionName).set(new Room(collectionName, mAuth.getCurrentUser().getDisplayName().toString(), mAuth.getCurrentUser().getUid().toString()));
-                            addMessageToRoom(collectionName, mAuth.getCurrentUser().getDisplayName().toString(), "this is a message!");
+                            //addMessageToRoom(collectionName, mAuth.getCurrentUser().getDisplayName().toString(), "this is a message!");
                         }
                     } else {
                         Log.e("Firestore", "Error checking collection existence", task.getException());
@@ -166,27 +164,20 @@ public class ChatsPage extends AppCompatActivity {
                 });
     }
     public static void addMessageToRoom(String collectionName, String userName, String messageContent) {
-        // Initialize Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Reference to the specific room document
         DocumentReference roomRef = db.collection("rooms").document(collectionName);
 
-        // Retrieve the existing Room document
         roomRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    // Document exists, retrieve the Room object
                     Room room = document.toObject(Room.class);
                     if (room != null) {
-                        // Create a new Message object
                         Message newMessage = new Message(userName, messageContent, Timestamp.now());
 
-                        // Add the new message to the list of messages
                         room.messages.add(newMessage);
 
-                        // Save the updated Room object back to Firestore
                         roomRef.set(room)
                                 .addOnSuccessListener(aVoid -> Log.d("Firestore", "Message successfully added to Room!"))
                                 .addOnFailureListener(e -> Log.w("Firestore", "Error adding message to Room", e));

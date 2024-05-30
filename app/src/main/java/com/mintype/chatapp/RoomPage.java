@@ -1,12 +1,19 @@
 package com.mintype.chatapp;
 
+import static android.graphics.Color.rgb;
+
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,11 +24,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+
 public class RoomPage extends AppCompatActivity {
 
     private static final String TAG = "RoomPage";
     private FirebaseAuth mAuth;
-    private String ROOM_ID;
+    private FirebaseFirestore db;
+    private String ROOM_NAME;
 
     private LinearLayout chatLayout;
     private EditText userMessageText;
@@ -36,50 +48,196 @@ public class RoomPage extends AppCompatActivity {
         userMessageText = findViewById(R.id.editTextText);
         sendButton = findViewById(R.id.button);
 
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Intent intent = getIntent();
-        ROOM_ID = intent.getStringExtra("ROOM_NAME");
+        ROOM_NAME = intent.getStringExtra("ROOM_NAME");
 
-        sendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // add message to room if not null or anything.
-                String usermsg = userMessageText.getText().toString().trim();
-                if(!usermsg.isEmpty()) {
-                    addMessageToRoom(ROOM_ID, mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), usermsg);
+        sendButton.setOnClickListener(v -> {
+            // add message to room if not null or anything.
+            String usermsg = userMessageText.getText().toString().trim();
+            if(!usermsg.isEmpty()) {
+                addMessageToRoom(ROOM_NAME, mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), usermsg);
+            }
+        });
+
+        DocumentReference roomRef = db.collection("rooms").document(ROOM_NAME);
+
+        roomRef.addSnapshotListener((documentSnapshot, e) -> {
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e);
+                return;
+            }
+
+            if (documentSnapshot != null && documentSnapshot.exists()) {
+                Room room = documentSnapshot.toObject(Room.class);
+                if (room != null) {
+                    updateChatLayout(room.getMessages());
                 }
+            } else {
+                Log.d(TAG, "Current data: null");
             }
         });
 
 
+
     }
-    public static void addMessageToRoom(String collectionName, String userId, String userName, String messageContent) {
+
+    private void updateChatLayout(ArrayList<Message> messages) {
+        chatLayout.removeAllViews();
+        Log.d("wefibhfe", "" + messages.toString());
+        for(Message message : messages) {
+            if(!message.getSender().equals(mAuth.getCurrentUser().getDisplayName())) {
+
+                //determine here if u should put a name above the textview or not.
+                boolean addnamebeforehand = true;
+                Log.d("uhwnj", "length: " + messages.size());
+                for(int i = 0; i < messages.size(); i++) {
+                    //TextView textView1 = (TextView) chatLayout.getChildAt(i);
+                    Log.d("uhwnj", messages.get(i).getMessage());
+                }
+
+
+                TextView textView = new TextView(getApplicationContext());
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+
+                if(addnamebeforehand)
+                    layoutParams.setMargins(20, 5, 20, 0); // left, top, right, bottom
+                else
+                    layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
+
+
+                // THIS CODE BELOW IS IMPORTANTE!!!!
+                layoutParams.gravity = Gravity.START; // Align the TextView to the left side
+                textView.setLayoutParams(layoutParams);
+
+                textView.setBackgroundColor(Color.GRAY);
+                textView.setId(View.generateViewId());
+
+                GradientDrawable drawable = new GradientDrawable();
+                drawable.setShape(GradientDrawable.RECTANGLE);
+                drawable.setColor(Color.GRAY); // Set background color
+                //drawable.setCornerRadius(10); // Set corner radius
+                drawable.setCornerRadii(new float[] {50, 50, 50, 50, 50, 50, 0, 0}); // idk how this works
+
+                textView.setBackground(drawable);
+
+                int paddingDp = 10;
+                float density = getApplicationContext().getResources().getDisplayMetrics().density;
+                int paddingPixel = (int)(paddingDp * density);
+                textView.setPadding(paddingPixel,paddingPixel,paddingPixel,paddingPixel);
+
+                textView.setText(message.getMessage().trim());
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(16f);
+                if(addnamebeforehand)
+                    addMessageName(message.getSender());
+                chatLayout.addView(textView);
+            } else {
+                TextView textView = new TextView(getApplicationContext());
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
+
+
+                // THIS CODE BELOW IS IMPORTANTE!!!!
+                layoutParams.gravity = Gravity.END; // Align the TextView to the right side
+                textView.setLayoutParams(layoutParams);
+
+                textView.setBackgroundColor(Color.GRAY);
+                textView.setId(View.generateViewId());
+
+                GradientDrawable drawable = new GradientDrawable();
+                drawable.setShape(GradientDrawable.RECTANGLE);
+                drawable.setColor(Color.GRAY); // Set background color
+                //drawable.setCornerRadius(10); // Set corner radius
+                drawable.setCornerRadii(new float[] {50, 50, 50, 50, 0, 0, 50, 50}); // idk how this works
+
+                // Set the background drawable to the TextView
+                textView.setBackground(drawable);
+
+                int paddingDp = 10;
+                float density = getApplicationContext().getResources().getDisplayMetrics().density;
+                int paddingPixel = (int)(paddingDp * density);
+                textView.setPadding(paddingPixel,paddingPixel,paddingPixel,paddingPixel);
+
+                textView.setText(message.getMessage().trim());
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(16f);
+                chatLayout.addView(textView);
+            }
+        }
+
+    }
+
+    private void addMessageName(String sender) {
+        TextView textView = new TextView(getApplicationContext());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
+
+
+        // THIS CODE BELOW IS IMPORTANTE!!!!
+        layoutParams.gravity = Gravity.START; // Align the TextView to the left side
+        textView.setLayoutParams(layoutParams);
+
+        //textView.setBackgroundColor(Color.GRAY);
+        textView.setId(View.generateViewId());
+
+//        GradientDrawable drawable = new GradientDrawable();
+//        drawable.setShape(GradientDrawable.RECTANGLE);
+//        drawable.setColor(rgb(148, 148, 148)); // Set background color
+//        //drawable.setCornerRadius(10); // Set corner radius
+//        drawable.setCornerRadii(new float[] {50, 50, 50, 50, 50, 50, 50, 50}); // idk how this works
+//
+//        textView.setBackground(drawable);
+
+        int paddingDp = 2;
+        float density = getApplicationContext().getResources().getDisplayMetrics().density;
+        int paddingPixel = (int)(paddingDp * density);
+        textView.setPadding(paddingPixel,paddingPixel,paddingPixel,paddingPixel);
+
+        textView.setText(sender);
+        textView.setTextColor(rgb(36, 36, 36));
+        textView.setTextSize(12f);
+//        textView.setTypeface(null, Typeface.BOLD); // add this for BOLD text!!!!!!!
+        chatLayout.addView(textView);
+    }
+
+    public void addMessageToRoom(String collectionName, String userId, String userName, String messageContent) {
         // Initialize Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        // Reference to the specific room document
         DocumentReference roomRef = db.collection("rooms").document(collectionName);
 
-        // Retrieve the existing Room document
         roomRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult();
                 if (document.exists()) {
-                    // Document exists, retrieve the Room object
                     Room room = document.toObject(Room.class);
                     if (room != null) {
-                        // Create a new Message object
                         Message newMessage = new Message(userId, userName, messageContent, Timestamp.now());
 
-                        // Add the new message to the list of messages
                         room.messages.add(newMessage);
 
-                        // Save the updated Room object back to Firestore
                         roomRef.set(room)
-                                .addOnSuccessListener(aVoid -> Log.d("Firestore", "Message successfully added to Room!"))
-                                .addOnFailureListener(e -> Log.w("Firestore", "Error adding message to Room", e));
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("Firestore", "Message successfully added to Room!");
+                                    runOnUiThread(() -> {
+                                        userMessageText.setText("");
+
+                                        addMessageToLayout(newMessage);
+                                    });
+                                }).addOnFailureListener(e -> Log.w("Firestore", "Error adding message to Room", e));
                     }
                 } else {
                     Log.d("Firestore", "No such document!");
@@ -88,5 +246,11 @@ public class RoomPage extends AppCompatActivity {
                 Log.d("Firestore", "get failed with ", task.getException());
             }
         });
+    }
+
+    private void addMessageToLayout(Message newMessage) {
+//        TextView messageView = new TextView(this);
+//        messageView.setText(newMessage.getMessage());
+//        chatLayout.addView(messageView);
     }
 }

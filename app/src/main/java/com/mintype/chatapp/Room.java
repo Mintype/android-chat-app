@@ -1,13 +1,22 @@
 package com.mintype.chatapp;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.PropertyName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Serializable {
+    @PropertyName("roomName")
     public String roomName;
+
+    @PropertyName("messages")
     public ArrayList<Message> messages;
+
+    @PropertyName("userName")
     public String userName;
+
+    @PropertyName("userId")
     public String userId;
 
     public Room() {
@@ -38,5 +47,13 @@ public class Room {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public ArrayList<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
     }
 }

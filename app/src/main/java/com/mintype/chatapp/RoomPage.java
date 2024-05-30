@@ -103,6 +103,15 @@ public class RoomPage extends AppCompatActivity {
         Log.d("wefibhfe", "" + messages.toString());
         String lastSender = null;
 
+        /*
+        *
+        *   TODO:
+        *       1. TURN ENCHANCED FOR LOOP INTO NORMAL FOR LOOP SO U CAN SEE THE INDEX AND PUT 10DP MARGIN BOTTOM ON LAST MESSAGE IN ARRAYLIST.
+        *       2. REMOVE THE 10DP MARGIN FROM THE XML.
+        *
+        *
+        * */
+
         for(Message message : messages) {
             if(!message.getSender().equals(mAuth.getCurrentUser().getDisplayName())) {
                 boolean isitcurentuserbruh = message.getSender().equals(mAuth.getCurrentUser().getDisplayName());

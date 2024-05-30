@@ -6,9 +6,40 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:layout_weight="0.01"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/leaveRoomButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/brown"
+            android:textSize="16dp"
+            android:layout_weight="0.1"
+            android:text="Leave"
+            app:cornerRadius="10dp" />
+
+        <TextView
+            android:id="@+id/roomTitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="22dp"
+            android:layout_gravity="center"
+
+            android:layout_weight="0.9"
+            android:text="Room Name" />
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="685dp"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:id="@+id/chat"
         android:background="@color/light_grey" >
@@ -23,7 +54,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0.1"
         android:orientation="horizontal">
 
         <EditText

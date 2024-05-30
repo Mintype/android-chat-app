@@ -37,7 +37,8 @@ public class RoomPage extends AppCompatActivity {
 
     private LinearLayout chatLayout;
     private EditText userMessageText;
-    private Button sendButton;
+    private Button sendButton, backButton;
+    private TextView roomTitleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +48,25 @@ public class RoomPage extends AppCompatActivity {
         chatLayout = findViewById(R.id.linearlayout);
         userMessageText = findViewById(R.id.editTextText);
         sendButton = findViewById(R.id.button);
+        backButton = findViewById(R.id.leaveRoomButton);
+        roomTitleText = findViewById(R.id.roomTitleText);
 
+        // firebase nonsense
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //FirebaseUser currentUser = mAuth.getCurrentUser(); // not needed i think
 
         Intent intent = getIntent();
         ROOM_NAME = intent.getStringExtra("ROOM_NAME");
+
+        roomTitleText.setText(ROOM_NAME);
+
+        // back button to go back to chats page
+        backButton.setOnClickListener(v -> {
+            Intent intent1 = new Intent(getApplicationContext(), ChatsPage.class);
+            startActivity(intent1);
+            finish();
+        });
 
         sendButton.setOnClickListener(v -> {
             // add message to room if not null or anything.
@@ -88,11 +101,13 @@ public class RoomPage extends AppCompatActivity {
     private void updateChatLayout(ArrayList<Message> messages) {
         chatLayout.removeAllViews();
         Log.d("wefibhfe", "" + messages.toString());
+        String lastSender = null;
+
         for(Message message : messages) {
             if(!message.getSender().equals(mAuth.getCurrentUser().getDisplayName())) {
-
+                boolean isitcurentuserbruh = message.getSender().equals(mAuth.getCurrentUser().getDisplayName());
                 //determine here if u should put a name above the textview or not.
-                boolean addnamebeforehand = true;
+                boolean addnamebeforehand = !isitcurentuserbruh && !message.getSender().equals(lastSender);
                 Log.d("uhwnj", "length: " + messages.size());
                 for(int i = 0; i < messages.size(); i++) {
                     //TextView textView1 = (TextView) chatLayout.getChildAt(i);
@@ -173,6 +188,7 @@ public class RoomPage extends AppCompatActivity {
                 textView.setTextSize(16f);
                 chatLayout.addView(textView);
             }
+            lastSender = message.getSender();
         }
 
     }

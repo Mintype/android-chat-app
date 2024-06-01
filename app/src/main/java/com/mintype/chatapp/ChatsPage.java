@@ -11,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class ChatsPage extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private TextView helloText;
     private Button createRoomButton;
+    private ImageButton settingsButton;
     private EditText roomNameText;
     private String displayName;
     private FirebaseFirestore db;
@@ -47,6 +49,7 @@ public class ChatsPage extends AppCompatActivity {
 
         helloText = findViewById(R.id.HelloText);
         createRoomButton = findViewById(R.id.createRoomButton);
+        settingsButton = findViewById(R.id.settingsButton);
         roomNameText = findViewById(R.id.roomNameText);
         roomsLayout = findViewById(R.id.collections);
 
@@ -65,25 +68,6 @@ public class ChatsPage extends AppCompatActivity {
 
             displayName = currentUser.getDisplayName();
             helloText.setText("Hello " + displayName + "!");
-
-            // add colections to the linearlayout
-//            db.collection("rooms")
-//                    .get()
-//                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                            if (task.isSuccessful()) {
-//                                for (QueryDocumentSnapshot document : task.getResult()) {
-//                                    Log.d("TAG", document.getId() + " => " + document.getData());
-//                                    TextView t = new TextView(getApplicationContext());
-//                                    t.setText(document.getId().toString().trim());
-//                                    roomsLayout.addView(t);
-//                                }
-//                            } else {
-//                                Log.d("TAG", "Error getting documents: ", task.getException());
-//                            }
-//                        }
-//                    });
 
             db.collection("rooms").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
@@ -138,6 +122,13 @@ public class ChatsPage extends AppCompatActivity {
                     if(!newRoomName.isEmpty()) {
                         createCollection(newRoomName);
                     }
+                }
+            });
+
+            settingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // send user to settings page using intents.
                 }
             });
         }

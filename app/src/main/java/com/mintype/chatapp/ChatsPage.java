@@ -107,8 +107,8 @@ public class ChatsPage extends AppCompatActivity {
                         GradientDrawable drawable = new GradientDrawable();
                         drawable.setShape(GradientDrawable.RECTANGLE);
                         drawable.setColor(Color.GRAY); // Set background color
+                        drawable.setCornerRadii(new float[] {15, 15, 15, 15, 15, 15, 15, 15}); // idk how this works
 
-                        // Set the background drawable to the textview
                         t.setBackground(drawable);
 
                         int paddingDp = 10;

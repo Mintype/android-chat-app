@@ -40,11 +40,6 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-//    EditText editTextText;
-//    Button button;
-//    ScrollView scrollView;
-//    LinearLayout linearLayout;
-//    FirebaseFirestore db;
     private FirebaseAuth mAuth;
     private static final int REQUEST_CODE_HOME = 1;
     private EditText emailEditText, passwordEditText, nameEditText;
@@ -58,16 +53,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.auth_page);
 
-//        FirebaseAuth.AuthStateListener authStateListener = auth -> {
-//            FirebaseUser firebaseUser = auth.getCurrentUser();
-//            if (firebaseUser != null) {
-//                //Do what you need to do
-//                Intent intent = new Intent(getApplicationContext(), ChatsPage.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        };
-
         emailEditText = findViewById(R.id.email);
         passwordEditText = findViewById(R.id.password);
         nameEditText = findViewById(R.id.nameText);
@@ -75,8 +60,22 @@ public class MainActivity extends AppCompatActivity {
         swtichButton = findViewById(R.id.swtichButton);
         signInTitleText = findViewById(R.id.signintitle);
         nameView = findViewById(R.id.nameView);
-        
-        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        // get the current user if it exist
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        // check for user
+        if (currentUser != null) {
+            // lets goooo user exists!!!!
+            Intent intent = new Intent(this, ChatsPage.class);
+            startActivity(intent);
+            finish(); // no delete this pls
+        } else {
+            // no user womp womp
+            Log.d("tacos", "NULL");
+        }
 
         FirebaseApp.initializeApp(this);
 
@@ -159,75 +158,6 @@ public class MainActivity extends AppCompatActivity {
                 nameView.startAnimation(animation);
             }
         });
-//        editTextText = findViewById(R.id.editTextText);
-//        button = findViewById(R.id.button);
-//        scrollView = findViewById(R.id.chat);
-//        linearLayout = findViewById(R.id.linearlayout);
-//
-//        db = FirebaseFirestore.getInstance();
-//
-//        button.setOnClickListener(v -> {
-//            if(!editTextText.getText().toString().trim().isEmpty()) {
-//                TextView textView = new TextView(getApplicationContext());
-//                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-//                        LinearLayout.LayoutParams.WRAP_CONTENT,
-//                        LinearLayout.LayoutParams.WRAP_CONTENT
-//                );
-//                layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
-//
-//
-//                // THIS CODE BELOW IS IMPORTANTE!!!!
-//                layoutParams.gravity = Gravity.END; // Align the TextView to the right side
-//
-//                // Create a new user with a first and last name
-//                Map<String, Object> user = new HashMap<>();
-//                user.put("message", editTextText.getText().toString().trim());
-//
-//                // Add a new document with a generated ID
-//                db.collection("users")
-//                        .add(user)
-//                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                            @Override
-//                            public void onSuccess(DocumentReference documentReference) {
-//                                Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
-//                            }
-//                        })
-//                        .addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception e) {
-//                                Log.w("TAG", "Error adding document", e);
-//                            }
-//                        });
-//
-//
-//
-//                textView.setLayoutParams(layoutParams);
-//
-//                textView.setBackgroundColor(Color.GRAY);
-//                textView.setId(View.generateViewId());
-//
-//                GradientDrawable drawable = new GradientDrawable();
-//                drawable.setShape(GradientDrawable.RECTANGLE);
-//                drawable.setColor(Color.GRAY); // Set background color
-//
-//                // Set the background drawable to the TextView
-//                textView.setBackground(drawable);
-//
-//                int paddingDp = 10;
-//                float density = getApplicationContext().getResources().getDisplayMetrics().density;
-//                int paddingPixel = (int)(paddingDp * density);
-//                textView.setPadding(paddingPixel,paddingPixel,paddingPixel,paddingPixel);
-//
-//                textView.setText(editTextText.getText().toString().trim());
-//                textView.setTextColor(Color.WHITE);
-//                textView.setTextSize(16f);
-//
-//
-//
-//                linearLayout.addView(textView);
-//                drawable.setCornerRadius(20); // Set corner radius
-//            }
-//        });
     }
 
     private void animateSignInButton() {

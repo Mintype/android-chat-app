@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class RoomPage extends AppCompatActivity {
     private String ROOM_NAME;
 
     private LinearLayout chatLayout;
+    private ScrollView scrollView;
     private EditText userMessageText;
     private Button sendButton, backButton;
     private TextView roomTitleText;
@@ -46,6 +48,7 @@ public class RoomPage extends AppCompatActivity {
         setContentView(R.layout.activity_room);
 
         chatLayout = findViewById(R.id.linearlayout);
+        scrollView = findViewById(R.id.chat);
         userMessageText = findViewById(R.id.editTextText);
         sendButton = findViewById(R.id.button);
         backButton = findViewById(R.id.leaveRoomButton);
@@ -108,7 +111,6 @@ public class RoomPage extends AppCompatActivity {
         *   TODO:
         *       1. TURN ENCHANCED FOR LOOP INTO NORMAL FOR LOOP SO U CAN SEE THE INDEX AND PUT 10DP MARGIN BOTTOM ON LAST MESSAGE IN ARRAYLIST.
         *       2. REMOVE THE 10DP MARGIN FROM THE XML.
-        *
         *
         * */
 
@@ -184,7 +186,6 @@ public class RoomPage extends AppCompatActivity {
                 //drawable.setCornerRadius(10); // Set corner radius
                 drawable.setCornerRadii(new float[] {50, 50, 50, 50, 0, 0, 50, 50}); // idk how this works
 
-                // Set the background drawable to the TextView
                 textView.setBackground(drawable);
 
                 int paddingDp = 10;
@@ -199,7 +200,7 @@ public class RoomPage extends AppCompatActivity {
             }
             lastSender = message.getSender();
         }
-
+        scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
     }
 
     private void addMessageName(String sender) {

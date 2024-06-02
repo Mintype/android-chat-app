@@ -129,6 +129,8 @@ public class ChatsPage extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     // send user to settings page using intents.
+                    Intent intent = new Intent(getApplicationContext(), SettingsPage.class);
+                    startActivity(intent);
                 }
             });
         }

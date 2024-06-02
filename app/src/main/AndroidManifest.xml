@@ -24,8 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!-- Add the other activities -->
+        <!-- The other activities -->
         <activity android:name=".ChatsPage"/>
+        <activity android:name=".SettingsPage"/>
         <activity android:name=".RoomPage"/>
     </application>
 

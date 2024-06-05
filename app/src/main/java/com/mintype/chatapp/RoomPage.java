@@ -76,6 +76,7 @@ public class RoomPage extends AppCompatActivity {
             String usermsg = userMessageText.getText().toString().trim();
             if(!usermsg.isEmpty()) {
                 addMessageToRoom(ROOM_NAME, mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), usermsg);
+                userMessageText.setText("");
             }
         });
 

@@ -8,53 +8,72 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/backButton"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.1"
+                android:backgroundTint="@color/brown"
+                android:text="Back" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
+                android:layout_weight="0.9"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="Settings"
+                android:textSize="40dp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.1"
-            android:backgroundTint="@color/brown"
-            android:text="Back" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:fontFamily="sans-serif-medium"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:layout_weight="0.9"
-            android:text="Settings"
-            android:textSize="40dp" />
-    </LinearLayout>
+            android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
+            <EditText
+                android:id="@+id/nameText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="new name..."
+                android:inputType="text"
+                android:text="" />
 
-        <EditText
-            android:id="@+id/nameText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="new name..."
-            android:text="" />
+            <Button
+                android:id="@+id/nameChangeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:backgroundTint="@color/black"
+                android:text="Change"
+                app:cornerRadius="10dp" />
+
+        </LinearLayout>
+
 
         <Button
-            android:id="@+id/nameChangeButton"
+            android:id="@+id/signOutButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+
+            android:layout_marginHorizontal="27dp"
             android:backgroundTint="@color/black"
-            android:layout_margin="10dp"
-            android:text="Change"
-            app:cornerRadius="10dp" />
+            android:text="Sign Out" />
     </LinearLayout>
+
 
 </LinearLayout>

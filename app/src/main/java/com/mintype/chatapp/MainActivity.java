@@ -66,16 +66,16 @@ public class MainActivity extends AppCompatActivity {
         // get the current user if it exist
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        // check for user
-        if (currentUser != null) {
-            // lets goooo user exists!!!!
-            Intent intent = new Intent(this, ChatsPage.class);
-            startActivity(intent);
-            finish(); // no delete this pls
-        } else {
-            // no user womp womp
-            Log.d("tacos", "NULL");
-        }
+//        // check for user
+//        if (currentUser != null) {
+//            // lets goooo user exists!!!!
+//            Intent intent = new Intent(this, ChatsPage.class);
+//            startActivity(intent);
+//            finish(); // no delete this pls
+//        } else {
+//            // no user womp womp
+//            Log.d("tacos", "NULL");
+//        }
 
         FirebaseApp.initializeApp(this);
 
@@ -196,45 +196,59 @@ public class MainActivity extends AppCompatActivity {
         });
     }
     private void createUser(String name, String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                .setDisplayName(name)
-                                .build();
-                        user.updateProfile(profileUpdates)
-                                .addOnCompleteListener(task1 -> {
-                                    if (task1.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Registration Successful.", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(getApplicationContext(), ChatsPage.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                });
-                    } else
-                        // If sign in fails, display a message to the user.
-                        Toast.makeText(getApplicationContext(), "Registration Failed.", Toast.LENGTH_SHORT).show();
-        });
+
+        try {
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name)
+                                    .build();
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(task1 -> {
+                                        if (task1.isSuccessful()) {
+                                            Toast.makeText(getApplicationContext(), "Registration Successful.", Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getApplicationContext(), ChatsPage.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    });
+                        } else
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(getApplicationContext(), "Registration Failed.", Toast.LENGTH_SHORT).show();
+            });
+        } catch(Exception e) {
+            Log.d("ERRORES!", e.getMessage().toString());
+            Toast.makeText(getApplicationContext(), "Sign Up Failed. Internal ERROR!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void loginUser(String email, String password) {
         Log.d("fwef", "wef " + (mAuth == null));
-        mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this, task -> {
-                Log.d("fwef", "wef");
-                if (task.isSuccessful()) {
-                    FirebaseUser user = mAuth.getCurrentUser();
-                    Log.d("fwef", "wef");
-                    Toast.makeText(getApplicationContext(), "Login Successful.", Toast.LENGTH_SHORT).show();
+        try {
+            mAuth = FirebaseAuth.getInstance();
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        Log.d("fwef", "wef");
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Log.d("fwef", "wef");
+                            Toast.makeText(getApplicationContext(), "Login Successful.", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(getApplicationContext(), ChatsPage.class);
-                    startActivity(intent);
-                    finish();
-                } else
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(getApplicationContext(), "Login Failed. Invalid email or password.", Toast.LENGTH_SHORT).show();
-        });
+                            Intent intent = new Intent(getApplicationContext(), ChatsPage.class);
+                            startActivity(intent);
+                            finish();
+                        } else
+                            // If sign in fails, display a message to the user.
+                            Toast.makeText(getApplicationContext(), "Login Failed. Invalid email or password.", Toast.LENGTH_SHORT).show();
+                    });
+            Toast.makeText(getApplicationContext(), "Login tried. No errors.", Toast.LENGTH_SHORT).show();
+        } catch(Exception e) {
+            Log.d("ERRORES!", e.getMessage().toString());
+            Toast.makeText(getApplicationContext(), "Login Failed. Internal ERROR!", Toast.LENGTH_SHORT).show();
+        }
         Log.d("fwef", "wwefewef");
     }
 }

@@ -22,7 +22,7 @@ public class SettingsPage extends AppCompatActivity {
 
 
     private EditText nameChangeText;
-    private Button nameChangeButton, backButton;
+    private Button nameChangeButton, backButton, signOutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +32,7 @@ public class SettingsPage extends AppCompatActivity {
         nameChangeText = findViewById(R.id.nameText);
         nameChangeButton = findViewById(R.id.nameChangeButton);
         backButton= findViewById(R.id.backButton);
+        signOutButton= findViewById(R.id.signOutButton);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -53,6 +54,17 @@ public class SettingsPage extends AppCompatActivity {
             Intent intent1 = new Intent(getApplicationContext(), ChatsPage.class);
             startActivity(intent1);
             finish();
+        });
+
+        // code for sign out button
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent1 = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent1);
+                finish();
+            }
         });
     }
     public void changeUserName(String newName) {

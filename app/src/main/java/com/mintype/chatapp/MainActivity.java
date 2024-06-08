@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(getApplicationContext(), "Login Failed. Invalid email or password.", Toast.LENGTH_SHORT).show();
                     });
-            Toast.makeText(getApplicationContext(), "Login tried. No errors.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "Login tried. No errors.", Toast.LENGTH_SHORT).show();
         } catch(Exception e) {
             Log.d("ERRORES!", e.getMessage().toString());
             Toast.makeText(getApplicationContext(), "Login Failed. Internal ERROR!", Toast.LENGTH_SHORT).show();

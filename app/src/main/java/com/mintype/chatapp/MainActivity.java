@@ -1,11 +1,14 @@
 package com.mintype.chatapp;
 
+import static com.mintype.chatapp.SettingsPage.getCameraInstance;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -67,15 +71,15 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
 //        // check for user
-//        if (currentUser != null) {
-//            // lets goooo user exists!!!!
-//            Intent intent = new Intent(this, ChatsPage.class);
-//            startActivity(intent);
-//            finish(); // no delete this pls
-//        } else {
-//            // no user womp womp
-//            Log.d("tacos", "NULL");
-//        }
+        if (currentUser != null) {
+            // lets goooo user exists!!!!
+            Intent intent = new Intent(this, ChatsPage.class);
+            startActivity(intent);
+            finish(); // no delete this pls
+        } else {
+            // no user womp womp
+            Log.d("tacos", "NULL");
+        }
 
         FirebaseApp.initializeApp(this);
 

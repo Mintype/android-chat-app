@@ -24,12 +24,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import android.Manifest;
@@ -67,6 +74,13 @@ public class SettingsPage extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
 
         mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null && user.getPhotoUrl() != null) {
+            Glide.with(this)
+                    .load(user.getPhotoUrl())
+                    .into(imageView);
+        }
 
         // button that changes name
         nameChangeButton.setOnClickListener(v -> {
@@ -125,16 +139,66 @@ public class SettingsPage extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == TAKE_PHOTO && data != null) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
-                imageView.setImageBitmap(photo);
-                setFirebaseProfilePicture(photo);
+                Bitmap croppedPhoto = cropToSquare(photo);
+                imageView.setImageBitmap(croppedPhoto);
+                setFirebaseProfilePicture(croppedPhoto);
             }
         }
     }
 
     private void setFirebaseProfilePicture(Bitmap photo) {
-        // yessir
+        if (photo == null) {
+            Log.e("settings page", "Bitmap is null.");
+            return;
+        }
 
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null) {
+            Log.e("settings page", "User is not logged in.");
+            return;
+        }
+
+        StorageReference mStorageRef = FirebaseStorage.getInstance().getReference();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        StorageReference pfpRef = mStorageRef.child("profile_pictures/" + user.getUid() + ".jpg");
+
+        // Upload the file
+        UploadTask uploadTask = pfpRef.putBytes(data);
+        uploadTask.addOnFailureListener(exception -> {
+            Log.e("settings page", "Upload failed: " + exception.getMessage());
+        }).addOnSuccessListener(taskSnapshot -> {
+            pfpRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                String downloadUrl = uri.toString();
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setPhotoUri(Uri.parse(downloadUrl))
+                        .build();
+
+                user.updateProfile(profileUpdates).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("settings page", "User profile updated.");
+                    } else {
+                        Log.e("settings page", "Error updating profile: " + task.getException().getMessage());
+                    }
+                });
+            }).addOnFailureListener(exception -> {
+                Log.e("settings page", "Failed to get download URL: " + exception.getMessage());
+            });
+        });
     }
+    private Bitmap cropToSquare(Bitmap srcBmp) {
+        int width = srcBmp.getWidth();
+        int height = srcBmp.getHeight();
+        int newWidth = Math.min(width, height);
+        int newHeight = Math.min(width, height);
+
+        int cropW = (width - newWidth) / 2;
+        int cropH = (height - newHeight) / 2;
+
+        return Bitmap.createBitmap(srcBmp, cropW, cropH, newWidth, newHeight);
+    }
+
 
     public void changeUserName(String newName) {
         // try to change name in firebase

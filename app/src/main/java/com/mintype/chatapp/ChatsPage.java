@@ -121,6 +121,7 @@ public class ChatsPage extends AppCompatActivity {
                     String newRoomName = roomNameText.getText().toString().trim();
                     if(!newRoomName.isEmpty()) {
                         createCollection(newRoomName);
+                        roomNameText.setText("");
                     }
                 }
             });
@@ -156,7 +157,7 @@ public class ChatsPage extends AppCompatActivity {
                     }
                 });
     }
-    public static void addMessageToRoom(String collectionName, String userName, String messageContent) {
+/*    public static void addMessageToRoom(String collectionName, String userName, String messageContent) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         DocumentReference roomRef = db.collection("rooms").document(collectionName);
@@ -182,5 +183,5 @@ public class ChatsPage extends AppCompatActivity {
                 Log.d("Firestore", "get failed with ", task.getException());
             }
         });
-    }
+    }*/
 }

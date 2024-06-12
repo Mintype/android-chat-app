@@ -3,6 +3,8 @@ package com.mintype.chatapp;
 import static android.graphics.Color.rgb;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -12,18 +14,22 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -75,7 +81,7 @@ public class RoomPage extends AppCompatActivity {
             // add message to room if not null or anything.
             String usermsg = userMessageText.getText().toString().trim();
             if(!usermsg.isEmpty()) {
-                addMessageToRoom(ROOM_NAME, mAuth.getCurrentUser().getUid(), mAuth.getCurrentUser().getDisplayName(), usermsg);
+                addMessageToRoom(ROOM_NAME, mAuth.getCurrentUser().getUid().toString(), mAuth.getCurrentUser().getDisplayName(), usermsg);
                 userMessageText.setText("");
             }
         });
@@ -97,9 +103,6 @@ public class RoomPage extends AppCompatActivity {
                 Log.d(TAG, "Current data: null");
             }
         });
-
-
-
     }
 
     private void updateChatLayout(ArrayList<Message> messages) {
@@ -120,10 +123,18 @@ public class RoomPage extends AppCompatActivity {
                 boolean isitcurentuserbruh = message.getSender().equals(mAuth.getCurrentUser().getDisplayName());
                 //determine here if u should put a name above the textview or not.
                 boolean addnamebeforehand = !isitcurentuserbruh && !message.getSender().equals(lastSender);
-                Log.d("uhwnj", "length: " + messages.size());
+
+
+                if(addnamebeforehand) {
+                    //testingimage();
+                    addPFPbeforehand(message.getUserID());
+                    addMessageName(message.getSender());
+                }
+
+                //Log.d("uhwnj", "length: " + messages.size());
                 for(int i = 0; i < messages.size(); i++) {
                     //TextView textView1 = (TextView) chatLayout.getChildAt(i);
-                    Log.d("uhwnj", messages.get(i).getMessage());
+                    //Log.d("uhwnj", messages.get(i).getMessage());
                 }
 
 
@@ -162,8 +173,7 @@ public class RoomPage extends AppCompatActivity {
                 textView.setText(message.getMessage().trim());
                 textView.setTextColor(Color.WHITE);
                 textView.setTextSize(16f);
-                if(addnamebeforehand)
-                    addMessageName(message.getSender());
+
                 chatLayout.addView(textView);
             } else {
                 TextView textView = new TextView(getApplicationContext());
@@ -204,7 +214,53 @@ public class RoomPage extends AppCompatActivity {
         scrollView.post(() -> scrollView.fullScroll(ScrollView.FOCUS_DOWN));
     }
 
+    private void addPFPbeforehand(String userID) {
+        ImageView pfp = new ImageView(getApplicationContext());
+
+        pfp.setId(View.generateViewId());
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                60, // width
+                60  // height
+        );
+        layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
+        layoutParams.gravity = Gravity.START; // Align the ImageView to the left side
+
+        pfp.setLayoutParams(layoutParams);
+        //pfp.setBackgroundColor(Color.BLUE);
+
+        StorageReference pfpRef = FirebaseStorage.getInstance().getReference().child("profile_pictures/" + userID + ".jpg");
+
+        GlideApp.with(getApplicationContext())
+                .load(pfpRef)
+                .into(pfp);
+
+        chatLayout.addView(pfp);
+    }
+
+
+    private void testingimage() {
+        ImageView pfp = new ImageView(getApplicationContext());
+
+        pfp.setId(View.generateViewId());
+
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        layoutParams.setMargins(20, 20, 20, 0); // left, top, right, bottom
+        layoutParams.gravity = Gravity.START; // Align the TextView to the left side
+
+        pfp.setLayoutParams(layoutParams);
+        pfp.getLayoutParams().width = 60;
+        pfp.getLayoutParams().height = 60;
+
+        pfp.setImageResource(R.drawable.ic_launcher_background);
+        chatLayout.addView(pfp);
+    }
+
     private void addMessageName(String sender) {
+        Log.d("tacos", "wefwef:   " + sender);
         TextView textView = new TextView(getApplicationContext());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
